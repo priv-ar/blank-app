@@ -1,7 +1,6 @@
 import streamlit as st
 import json
 import boto3
-import os
 
 # Initialize Lambda client
 try:
@@ -14,6 +13,10 @@ try:
 except Exception as e:
     st.error(f"Fail Lambda init: {e}")
 
+# Initialize session state to store conversation history
+if 'messages' not in st.session_state:
+    st.session_state.messages = []
+
 # Set the title for the Streamlit app
 st.title("Virtual Assistant for Customer Support")
 
@@ -21,8 +24,13 @@ st.title("Virtual Assistant for Customer Support")
 question = st.text_input("Enter your question:")
 context = st.text_area("Provide the context for your question:")
 
+# Display the conversation history
+for message in st.session_state.messages:
+    st.markdown(f"**You**: {message['question']}")
+    st.markdown(f"**Assistant**: {message['answer']}")
+
 # Button to send the question and context
-if st.button("Get Answer"):
+if st.button("Send"):
     if question and context:
         # Prepare the payload (data) to send to the Lambda function
         payload = {
@@ -39,9 +47,6 @@ if st.button("Get Answer"):
                 InvocationType='RequestResponse',
                 Payload=json.dumps(payload)
             )
-            # os.write(1, b'---------------------------')
-            # st.write(response)
-            # os.write(1, b'---------------------------')
 
             # Read and parse response
             response_payload = json.loads(response['Payload'].read())
@@ -54,8 +59,14 @@ if st.button("Get Answer"):
             if response_payload.get('statusCode') == 200:
                 # Parse and display the result
                 result = json.loads(response_payload['body'])
-                st.write(f"Question: {result['Question']}")
-                st.write(f"Answer: {result['Message']}")
+
+                # Add the question and answer to the session state
+                st.session_state.messages.append({
+                    'question': question,
+                    'answer': result['Message']
+                })
+                # st.write(f"Question: {result['Question']}")
+                # st.write(f"Answer: {result['Message']}")
             else:
                 st.error(f"Error: Could not get a valid response, status code: {response_payload.get('statusCode')}")
         except Exception as e:
