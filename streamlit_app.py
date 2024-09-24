@@ -1,10 +1,11 @@
 import streamlit as st
 import json
 import boto3
+import os
 
-# Get AWS credentials from environment variables
-# AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-# AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+# Explicitly set environment variables
+os.environ['AWS_ACCESS_KEY_ID'] = os.getenv('AWS_ACCESS_KEY_ID')
+os.environ['AWS_SECRET_ACCESS_KEY'] = os.getenv('AWS_SECRET_ACCESS_KEY')
 
 # Initialize Lambda client
 lambda_client = boto3.client(
