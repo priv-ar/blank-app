@@ -4,12 +4,15 @@ import boto3
 import os
 
 # Initialize Lambda client
-lambda_client = boto3.client(
-    'lambda',
-    region_name='eu-west-1',
-    aws_access_key_id=st.secrets["AWS_ACCESS_KEY_ID"],
-    aws_secret_access_key=st.secrets["AWS_SECRET_ACCESS_KEY"]
-)
+try:
+    lambda_client = boto3.client(
+        'lambda',
+        region_name='eu-west-1',
+        aws_access_key_id=st.secrets["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=st.secrets["AWS_SECRET_ACCESS_KEY"]
+    )
+except Exception as e:
+    st.error(f"Fail Lambda init: {e}")
 
 # Set the title for the Streamlit app
 st.title("Virtual Assistant for Customer Support")
