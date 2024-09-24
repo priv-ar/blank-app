@@ -35,6 +35,7 @@ if st.button("Get Answer"):
                 InvocationType='RequestResponse',
                 Payload=json.dumps(payload)
             )
+            print(response)
 
             # Read and parse response
             response_payload = json.loads(response['Payload'].read())
