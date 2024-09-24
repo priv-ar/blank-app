@@ -13,6 +13,16 @@ try:
 except Exception as e:
     st.error(f"Fail Lambda init: {e}")
 
+# Chatbot Title
+st.title("🤖 Virtual Assistant for Customer Support")
+
+# Polite introduction of the chatbot
+st.write("""
+Hello! I’m your friendly virtual assistant, here to help you with any questions or issues related to our products and services.
+I can assist you with common customer support topics such as password resets, tracking orders, return policies, and more.
+Please provide your question and some context so I can help you more effectively.
+""")
+
 # Create a session state variable to store chat messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -60,7 +70,7 @@ if user_question and user_context:
 
         # Check if the request was successful
         if response_payload.get('statusCode') == 200:
-            # Parse and display the result
+            # Parse the result
             result = json.loads(response_payload['body'])
 
             assistant_response = result['Message']
