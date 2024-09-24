@@ -35,7 +35,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # Accessing the secret securely
         aws-region: eu-west-1  # Make sure this matches your AWS region
 
-    # Step 4: Run your Streamlit app
+    # Step 4: Verify AWS credentials
+    - name: Verify AWS credentials
+      run: aws sts get-caller-identity
+    
+    # Step 5: Run your Streamlit app
     - name: Run Streamlit App
       run: |
         streamlit run streamlit_app.py

@@ -4,14 +4,15 @@ import json
 import boto3
 
 # Get AWS credentials from environment variables
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+# AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+# AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
 
+# Initialize Lambda client
 lambda_client = boto3.client(
     'lambda',
-    region_name='eu-west-1',
-    aws_access_key_id=AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+    region_name='eu-west-1'# ,
+    # aws_access_key_id=AWS_ACCESS_KEY_ID,
+    # aws_secret_access_key=AWS_SECRET_ACCESS_KEY
 )
 
 # Set the title for the Streamlit app
@@ -33,16 +34,20 @@ if st.button("Get Answer"):
         arn_url = "arn:aws:lambda:eu-west-1:640167380126:function:CallSageMakerLLM"
 
         try:
-             # Invoke Lambda function
+            # Invoke Lambda function
             response = lambda_client.invoke(
                 FunctionName=arn_url,
                 InvocationType='RequestResponse',
                 Payload=json.dumps(payload)
             )
 
-            # Read response
+            # Read and parse response
             response_payload = json.loads(response['Payload'].read())
             
+            # Check for errors in the response
+            if 'FunctionError' in response:
+                st.error(f"Lambda function error: {response['FunctionError']}")
+
             # Check if the request was successful
             if response_payload.get('statusCode') == 200:
                 # Parse and display the result
@@ -50,8 +55,8 @@ if st.button("Get Answer"):
                 st.write(f"Question: {result['Question']}")
                 st.write(f"Answer: {result['Message']}")
             else:
-                st.error("Error: Could not get a valid response from the model")
+                st.error(f"Error: Could not get a valid response, status code: {response_payload.get('statusCode')}")
         except Exception as e:
-            st.error(f"Error: {e}")
+            st.error(f"Error invoking Lambda: {e}")
     else:
         st.error("Please enter both a question and context.")
