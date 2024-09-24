@@ -44,7 +44,7 @@ if st.session_state.step == "ask_question":
         st.session_state.messages.append({"role": "user", "content": user_question})
         st.session_state.user_question = user_question  # Store the question
         st.session_state.step = "ask_context"  # Move to the next step
-        st.experimental_rerun()  # Rerun to show the context input
+        st.rerun()  # Rerun to show the context input
 
 # Step 2: Ask for the context after the question is provided
 elif st.session_state.step == "ask_context":
@@ -99,7 +99,7 @@ elif st.session_state.step == "ask_context":
 
         # Reset to ask a new question after completing the interaction
         st.session_state.step = "ask_question"
-        st.experimental_rerun()
+        st.rerun()
 
     # Only display an error if the context is missing
     elif not user_context:
