@@ -6,9 +6,9 @@ import os
 # Initialize Lambda client
 lambda_client = boto3.client(
     'lambda',
-    region_name='eu-west-1'# ,
-    # aws_access_key_id=AWS_ACCESS_KEY_ID,
-    # aws_secret_access_key=AWS_SECRET_ACCESS_KEY
+    region_name='eu-west-1',
+    aws_access_key_id=st.secrets["AWS_ACCESS_KEY_ID"],
+    aws_secret_access_key=st.secrets["AWS_SECRET_ACCESS_KEY"]
 )
 
 # Set the title for the Streamlit app
@@ -40,9 +40,9 @@ if st.button("Get Answer"):
                 InvocationType='RequestResponse',
                 Payload=json.dumps(payload)
             )
-            os.write(1, '---------------------------')
+            os.write(1, b'---------------------------')
             st.write(response)
-            os.write(1, '---------------------------')
+            os.write(1, b'---------------------------')
 
             # Read and parse response
             response_payload = json.loads(response['Payload'].read())
