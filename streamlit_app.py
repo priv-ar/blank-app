@@ -1,6 +1,5 @@
 import os
 import streamlit as st
-import requests
 import json
 import boto3
 
