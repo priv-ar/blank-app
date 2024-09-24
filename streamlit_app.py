@@ -101,5 +101,6 @@ elif st.session_state.step == "ask_context":
         st.session_state.step = "ask_question"
         st.experimental_rerun()
 
-    elif st.session_state.user_question or user_context:
-        st.error("Please fill in both the question and the context.")
+    # Only display an error if the context is missing
+    elif not user_context:
+        st.error("Please provide the context for your question.")
