@@ -40,9 +40,9 @@ if st.button("Get Answer"):
                 InvocationType='RequestResponse',
                 Payload=json.dumps(payload)
             )
-            os.write("---------------------------")
+            os.write(1, '---------------------------')
             st.write(response)
-            os.write("---------------------------")
+            os.write(1, '---------------------------')
 
             # Read and parse response
             response_payload = json.loads(response['Payload'].read())
