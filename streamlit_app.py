@@ -1,6 +1,7 @@
 import streamlit as st
 import json
 import boto3
+import os
 
 # Initialize Lambda client
 lambda_client = boto3.client(
@@ -39,9 +40,9 @@ if st.button("Get Answer"):
                 InvocationType='RequestResponse',
                 Payload=json.dumps(payload)
             )
-            st.write("---------------------------")
+            os.write("---------------------------")
             st.write(response)
-            st.write("---------------------------")
+            os.write("---------------------------")
 
             # Read and parse response
             response_payload = json.loads(response['Payload'].read())
