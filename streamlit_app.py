@@ -13,63 +13,70 @@ try:
 except Exception as e:
     st.error(f"Fail Lambda init: {e}")
 
-# Initialize session state to store conversation history
-if 'messages' not in st.session_state:
+# Create a session state variable to store chat messages
+if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Set the title for the Streamlit app
-st.title("Virtual Assistant for Customer Support")
-
-# Input fields for question and context
-question = st.text_input("Enter your question:")
-context = st.text_area("Provide the context for your question:")
-
-# Display the conversation history
+# Display the chat messages from session state
 for message in st.session_state.messages:
-    st.markdown(f"**You**: {message['question']}")
-    st.markdown(f"**Assistant**: {message['answer']}")
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
 
-# Button to send the question and context
-if st.button("Send"):
-    if question and context:
-        # Prepare the payload (data) to send to the Lambda function
-        payload = {
-            "question": question,
-            "context": context
-        }
+# Input fields for the user's prompt and context
+user_question = st.chat_input("What's your question?")
+user_context = st.text_area("Please provide the context for your question")
 
-        arn_url = "arn:aws:lambda:eu-west-1:640167380126:function:CallSageMakerLLM"
+# Ensure both fields are filled in before proceeding
+if user_question and user_context:
+    # Add user's message to chat history
+    st.session_state.messages.append({"role": "user", "content": user_question})
 
-        try:
-            # Invoke Lambda function
-            response = lambda_client.invoke(
-                FunctionName=arn_url,
-                InvocationType='RequestResponse',
-                Payload=json.dumps(payload)
-            )
+    # Display the user's message
+    with st.chat_message("user"):
+        st.markdown(user_question)
 
-            # Read and parse response
-            response_payload = json.loads(response['Payload'].read())
-            
-            # Check for errors in the response
-            if 'FunctionError' in response:
-                st.error(f"Lambda function error: {response['FunctionError']}")
+    # Prepare the payload (data) to send to the Lambda function
+    payload = {
+        "question": user_question,
+        "context": user_context
+    }
 
-            # Check if the request was successful
-            if response_payload.get('statusCode') == 200:
-                # Parse and display the result
-                result = json.loads(response_payload['body'])
+    arn_url = "arn:aws:lambda:eu-west-1:640167380126:function:CallSageMakerLLM"
 
-                # Add the question and answer to the session state
-                st.session_state.messages.append({
-                    'question': question,
-                    'answer': result['Message']
-                })
-                # st.write(f"Question: {result['Question']}")
-                # st.write(f"Answer: {result['Message']}")
-            else:
-                st.error(f"Error: Could not get a valid response, status code: {response_payload.get('statusCode')}")
-        except Exception as e:
-            st.error(f"Error invoking Lambda: {e}")
-    else:
-        st.error("Please enter both a question and context.")
+    try:
+        # Invoke Lambda function
+        response = lambda_client.invoke(
+            FunctionName=arn_url,
+            InvocationType='RequestResponse',
+            Payload=json.dumps(payload)
+        )
+
+        # Read and parse response
+        response_payload = json.loads(response['Payload'].read())
+        
+        # Check for errors in the response
+        if 'FunctionError' in response:
+            st.error(f"Lambda function error: {response['FunctionError']}")
+
+        # Check if the request was successful
+        if response_payload.get('statusCode') == 200:
+            # Parse and display the result
+            result = json.loads(response_payload['body'])
+
+            assistant_response = result['Message']
+
+            # Display assistant's response
+            with st.chat_message("assistant"):
+                st.markdown(assistant_response)
+
+            # Store the assistant's response in session state
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": assistant_response
+            })            
+        else:
+            st.error(f"Error: Could not get a valid response, status code: {response_payload.get('statusCode')}")
+    except Exception as e:
+        st.error(f"Error invoking Lambda: {e}")
+elif user_question or user_context:
+    st.error("Please fill in both the question and the context.")
