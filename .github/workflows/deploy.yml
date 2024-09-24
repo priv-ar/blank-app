@@ -10,7 +10,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
     # Step 1: Check out the code from the repository
     - name: Checkout code
@@ -22,13 +22,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    # Step 3: Set up AWS credentials from GitHub Secrets
+    # Step 3: Set up AWS credentials using GitHub Secrets
     - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@v2
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: eu-west-1
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}  # Accessing the secret securely
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  # Accessing the secret securely
+        aws-region: eu-west-1  # Make sure this matches your AWS region
 
     # Step 4: Run your Streamlit app
     - name: Run Streamlit App
