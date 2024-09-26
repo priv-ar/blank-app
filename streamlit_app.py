@@ -14,7 +14,7 @@ except Exception as e:
     st.error(f"Fail Lambda init: {e}")
 
 # Chatbot Title
-st.title("📦 XYZ Store - 🤖 Virtual Assistant for Customer Support")
+st.title("XYZ Store - 🤖 Virtual Assistant")
 st.subheader("Your favorite store for XYZ products!")
 
 # Polite introduction of the chatbot
