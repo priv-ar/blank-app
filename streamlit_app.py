@@ -64,7 +64,7 @@ elif st.session_state.step == "ask_email":
 
 # Step 3: Ask for the user's question
 elif st.session_state.step == "ask_question":
-    user_question = st.chat_input("Thank you. What is your question?")
+    user_question = st.chat_input("What is your question?")
     if user_question:
         # Add user's question to chat history
         st.session_state.messages.append({"role": "user", "content": user_question})
