@@ -14,11 +14,12 @@ except Exception as e:
     st.error(f"Fail Lambda init: {e}")
 
 # Chatbot Title
-st.title("🤖 Virtual Assistant for Customer Support")
+st.title("📦 XYZ Store - 🤖 Virtual Assistant for Customer Support")
+st.subheader("Your favorite store for XYZ products!")
 
 # Polite introduction of the chatbot
 st.write("""
-Hello! I’m your friendly virtual assistant, here to help you with any questions or issues related to our products and services.
+Hello! Welcome to XYZ Store, the best place for all your XYZ needs. I’m your friendly virtual assistant, here to help you with any questions or issues related to our products and services.
 I can assist you with common customer support topics such as password resets, tracking orders, return policies, and more.
 Please provide your question and some context so I can help you more effectively.
 """)
