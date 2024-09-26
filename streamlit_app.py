@@ -64,7 +64,7 @@ elif st.session_state.step == "ask_email":
 
 # Step 3: Ask for the user's question
 elif st.session_state.step == "ask_question":
-    user_question = st.chat_input("Thank you. What is your question?")
+    user_question = st.text_input("Thank you. What is your question?")
     if user_question:
         # Add user's question to chat history
         st.session_state.messages.append({"role": "user", "content": user_question})
@@ -74,7 +74,7 @@ elif st.session_state.step == "ask_question":
 
 # Step 4: Ask for the context after the question is provided
 elif st.session_state.step == "ask_context":
-    user_context = st.chat_input("Thanks for your request. Could you please provide the context for your question?")
+    user_context = st.text_input("Thanks for your request. Could you please provide the context for your question?")
     if user_context:
         # Add user's context to chat history
         st.session_state.messages.append({"role": "user", "content": user_context})
