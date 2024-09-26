@@ -28,18 +28,43 @@ Please provide your question and some context so I can help you more effectively
 if "messages" not in st.session_state:
     st.session_state.messages = []
 if "step" not in st.session_state:
-    st.session_state.step = "ask_question"  # Conversation starts with asking the question
-if "user_question" not in st.session_state:
-    st.session_state.user_question = ""
+    st.session_state.step = "ask_name"  # New step starts with asking the user's name
+if "ask_name" not in st.session_state:
+    st.session_state.ask_name = "" # To store the user's name
 
 # Display the chat messages from session state
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Step 1: Ask for the user's question
-if st.session_state.step == "ask_question":
-    user_question = st.chat_input("What's your question?")
+# Step 1: Ask for the user's name
+if st.session_state.step == "ask_name":
+    user_name = st.text_input("What is your name?")
+    if user_name:
+        # Store the user's name in session state
+        st.session_state.user_name = user_name
+
+        # Add to chat history
+        st.session_state.messages.append({"role": "user", "content": f"My name is {user_name}."})
+        
+        # Move to the next step (ask email)
+        st.session_state.step = "ask_email"
+        st.rerun()
+
+# Step 2: Ask for the user's email (but do not store it)
+elif st.session_state.step == "ask_email":
+    user_email = st.text_input(f"Hello {st.session_state.user_name}, thank you for your answer. What is your email?")
+    if user_email:
+        # Add to chat history but do not store the email
+        st.session_state.messages.append({"role": "user", "content": f"My email is {user_email}."})
+        
+        # Move to the next step (ask question)
+        st.session_state.step = "ask_question"
+        st.rerun()
+
+# Step 3: Ask for the user's question
+elif st.session_state.step == "ask_question":
+    user_question = st.chat_input("Thank you. What is your question?")
     if user_question:
         # Add user's question to chat history
         st.session_state.messages.append({"role": "user", "content": user_question})
@@ -47,9 +72,9 @@ if st.session_state.step == "ask_question":
         st.session_state.step = "ask_context"  # Move to the next step
         st.rerun()  # Rerun to show the context input
 
-# Step 2: Ask for the context after the question is provided
+# Step 4: Ask for the context after the question is provided
 elif st.session_state.step == "ask_context":
-    user_context = st.chat_input("Could you please provide the context for your question?")
+    user_context = st.chat_input("Thanks for your request. Could you please provide the context for your question?")
     if user_context:
         # Add user's context to chat history
         st.session_state.messages.append({"role": "user", "content": user_context})
